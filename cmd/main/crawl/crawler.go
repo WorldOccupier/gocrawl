@@ -8,6 +8,24 @@ import (
 	"com.gocrawl/logger"
 )
 
+var (
+	get = "GET"
+	userAgent = "user-agent"
+	gogetbot = "gogetbot"
+)
+
+func makeRequest(url string) (*http.Response, error) {
+	client := &http.Client{}
+	request, err := http.NewRequest(get, url, nil)
+	if err != nil {
+		logger.Log.Error("Error while creating request for url: " + url + err.Error())
+		return nil, err
+	}
+	request.Header.Set(userAgent, gogetbot)
+
+	return client.Do(request)
+}
+
 func GetPageContent(url string, checkCrawlability bool) (string, error) {
 	if checkCrawlability {
 		canCrawl, err := CanCrawl(url)
@@ -16,7 +34,7 @@ func GetPageContent(url string, checkCrawlability bool) (string, error) {
 		}
 	}
 
-	response, err := http.Get(url)
+	response, err := makeRequest(url)
 	if err != nil {
 		logger.Log.Error("Error retrieving content from url: ", "error", err)
 		return "", errors.New("Error retrieving content from url")
