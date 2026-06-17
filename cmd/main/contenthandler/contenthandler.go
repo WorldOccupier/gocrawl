@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 var (
@@ -14,7 +14,7 @@ var (
 )
 
 type WebPageContentHandler struct {
-	connection *pgx.Conn
+	pgConnectionPool *pgxpool.Pool
 }
 
 func getDBUrl() string {
@@ -26,18 +26,18 @@ func getDBUrl() string {
 	return databaseUrl
 }
 
-func (webPageContentHandler *WebPageContentHandler) GetConnection() *pgx.Conn {
-	if webPageContentHandler.connection == nil {
+func (webPageContentHandler *WebPageContentHandler) GetConnection() *pgxpool.Pool {
+	if webPageContentHandler.pgConnectionPool == nil {
 		dbUrl := getDBUrl()
-		pgConnection, err := pgx.Connect(ctx, dbUrl)
+		pgPool, err := pgxpool.New(ctx, dbUrl)
 		if err != nil {
 			panic(err)
 		}
 
-		webPageContentHandler.connection = pgConnection
+		webPageContentHandler.pgConnectionPool = pgPool
 	}
 
-	return webPageContentHandler.connection
+	return webPageContentHandler.pgConnectionPool
 }
 
 func (webPageContentHandler *WebPageContentHandler) SaveCrawledContent(url string, crawledDateTime time.Time, content string) {
