@@ -7,7 +7,7 @@ down:
 	docker compose down
 
 rebuild:
-	docker compose down -v && docker compose up --build
+	docker compose down -v && docker compose up -d --build && docker compose logs -f
 
 logs:
 	docker compose logs -f

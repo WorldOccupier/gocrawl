@@ -18,11 +18,9 @@ func GetRedisClient() *redis.Client {
 }
 
 func EnsureCrawlableUrlsArePresentOnStartup() {
-	links, err := GetUrlsToCrawl()
-	if err != nil || len(links) == 0 {
+	count, err := redisClient.LLen(ctx, queueKey).Result()
+	if err != nil || count == 0 {
 		InitUrls()
-	} else if len(links) > 0 {
-		AppendUrlsToCrawl(links)
 	}
 }
 

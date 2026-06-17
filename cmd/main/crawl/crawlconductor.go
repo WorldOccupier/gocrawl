@@ -32,7 +32,10 @@ func StartCrawl() error {
 
 			if len(result) == 0 {
 				logger.Log.Info("Crawling: " + url)
-				pageContent, _ := GetPageContent(url, true)
+				pageContent, err := GetPageContent(url, true)
+				if err != nil {
+					logger.Log.Error("Error while getting page content for url: " + url, "error", err.Error())
+				}
 				webPageContentHandler.SaveCrawledContent(url, time.Now(), pageContent)
 				pageLinks := GetPageLinks(url, pageContent)
 				queue.AppendUrlsToCrawl(pageLinks)

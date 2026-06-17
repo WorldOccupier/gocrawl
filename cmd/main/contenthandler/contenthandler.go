@@ -5,12 +5,12 @@ import (
 	"os"
 	"time"
 
-	"com.gocrawl/logger"
 	"github.com/jackc/pgx/v5"
 )
 
 var (
 	ctx = context.Background()
+	defaultDatabaseUrl = "postgres://user:pass@localhost:5432/mydb"
 )
 
 type WebPageContentHandler struct {
@@ -20,7 +20,7 @@ type WebPageContentHandler struct {
 func getDBUrl() string {
 	databaseUrl := os.Getenv("DATABASE_URL")
 	if databaseUrl == "" {
-		databaseUrl = "postgres://user:pass@localhost:5432/mydb"
+		databaseUrl = defaultDatabaseUrl
 	}
 
 	return databaseUrl
@@ -41,9 +41,8 @@ func (webPageContentHandler *WebPageContentHandler) GetConnection() *pgx.Conn {
 }
 
 func (webPageContentHandler *WebPageContentHandler) SaveCrawledContent(url string, crawledDateTime time.Time, content string) {
-	logger.Log.Info("url: " + url)
 	connection := webPageContentHandler.GetConnection()
-	_, err := connection.Query(ctx, "INSERT INTO t_web_page_details VALUES ($1, $2, $3)", url, crawledDateTime, content)
+	_, err := connection.Exec(ctx, "INSERT INTO t_web_page_details VALUES ($1, $2, $3)", url, crawledDateTime, content)
 	if err != nil {
 		panic(err)
 	}
