@@ -3,11 +3,20 @@ package crawl
 import (
 	"time"
 
+	"com.gocrawl/contenthandler"
+	"com.gocrawl/logger"
 	"com.gocrawl/queue"
 )
 
+var (
+	crawledValue = "1"
+	crawledTTL = time.Hour*24*7
+)
+
 func StartCrawl() error {
-	queue.InitUrls()
+	webPageContentHandler := &contenthandler.WebPageContentHandler{}
+	redisClient := queue.GetRedisClient()
+
 	for {
 		links, err := queue.GetUrlsToCrawl()
 		if err != nil {
@@ -15,11 +24,22 @@ func StartCrawl() error {
 		}
 
 		for _, url := range links {
-			pageContent, _ := GetPageContent(url, true)
-			pageLinks := GetPageLinks(pageContent)
-			queue.AppendUrlsToCrawl(pageLinks)
+			cmd := redisClient.Keys(ctx, url)
+			result, err := cmd.Result()
+			if err != nil {
+				return err
+			}
+
+			if len(result) == 0 {
+				logger.Log.Info("Crawling: " + url)
+				pageContent, _ := GetPageContent(url, true)
+				webPageContentHandler.SaveCrawledContent(url, time.Now(), pageContent)
+				pageLinks := GetPageLinks(url, pageContent)
+				queue.AppendUrlsToCrawl(pageLinks)
+				redisClient.Set(ctx, url, crawledValue, crawledTTL)
+			}
 		}
 
-		time.Sleep(time.Second * 2)
+		time.Sleep(time.Millisecond * 200)
 	}
 }
