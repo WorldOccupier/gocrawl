@@ -1,4 +1,4 @@
-.PHONY: up down rebuild logs clean
+.PHONY: up down rebuild logs clean localbuild
 
 up:
 	docker compose up -d
@@ -14,3 +14,6 @@ logs:
 
 clean:
 	docker compose down -v
+
+localbuild:
+	go build -C cmd/main -o ../../gocrawl .

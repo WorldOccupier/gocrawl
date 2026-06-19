@@ -2,34 +2,38 @@ package queue
 
 import (
 	"context"
+	"math"
 
 	"com.gocrawl/common"
 	"com.gocrawl/logger"
+	"golang.org/x/time/rate"
 )
 
 var (
 	ctx          = context.Background()
 	initUrlsFile = "initurls.txt"
-	queueKey     = "queue"
+	crawlableQueueKey     = "queue"
+	blmPopDirection = "LEFT"
 	redisClient  = GetRedisClient()
 )
 
-func GetUrlsToCrawl() ([]string, error) {
-	result, err := redisClient.BLPop(ctx, 0, queueKey).Result()
+func GetUrlsToCrawl(urlsCount rate.Limit) ([]string, error) {
+	queueLength, err := redisClient.LLen(ctx, crawlableQueueKey).Result()
+	if queueLength == 0 {
+		return []string{}, nil
+	}
+	_, results, err := redisClient.BLMPop(ctx, 0, blmPopDirection, int64(math.Min(float64(urlsCount), float64(queueLength))), crawlableQueueKey).Result()
 	if err != nil {
 		logger.Log.Error(err.Error())
 		return nil, err
 	}
 
-	urls := make([]string, 0)
-	urls = append(urls, result[1])
-
-	return urls, nil
+	return results, nil
 }
 
 func AppendUrlsToCrawl(urls []string) {
 	for _, url := range urls {
-		redisClient.RPush(ctx, queueKey, url)
+		redisClient.RPush(ctx, crawlableQueueKey, url)
 	}
 }
 

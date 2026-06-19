@@ -18,7 +18,7 @@ func GetRedisClient() *redis.Client {
 }
 
 func EnsureCrawlableUrlsArePresentOnStartup() {
-	count, err := redisClient.LLen(ctx, queueKey).Result()
+	count, err := redisClient.LLen(ctx, crawlableQueueKey).Result()
 	if err != nil || count == 0 {
 		InitUrls()
 	}

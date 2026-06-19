@@ -5,8 +5,10 @@ import (
 	neturl "net/url"
 	"time"
 
+	"com.gocrawl/logger"
 	"com.gocrawl/queue"
 	"github.com/jimsmart/grobotstxt"
+	"github.com/redis/go-redis/v9"
 )
 
 const (
@@ -41,6 +43,13 @@ func saveCrawlability(parsedUrl *neturl.URL, canCrawl bool) {
 }
 
 func CanCrawl(url string) (bool, error) {
+	redisClient := queue.GetRedisClient()
+	_, err := redisClient.Get(ctx, redisPrefix+url).Result()
+	if err != redis.Nil {
+		logger.Log.Error(err.Error())
+		return false, err
+	}
+
 	parsedUrl, err := neturl.Parse(url)
 	if err != nil {
 		return false, err
