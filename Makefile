@@ -1,4 +1,4 @@
-.PHONY: up down rebuild logs clean localbuild
+.PHONY: up down rebuild logs clean localbuild redis postgres
 
 up:
 	docker compose up -d
@@ -14,6 +14,12 @@ logs:
 
 clean:
 	docker compose down -v
+
+redis:
+	docker compose up -d redis
+
+postgres:
+	docker compose up -d postgres
 
 localbuild:
 	go build -C cmd/main -o ../../gocrawl .
