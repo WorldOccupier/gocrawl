@@ -43,7 +43,7 @@ func (webPageContentHandler *WebPageContentHandler) GetConnection() *pgxpool.Poo
 
 func (webPageContentHandler *WebPageContentHandler) SaveCrawledContent(url string, crawledDateTime time.Time, content string) {
 	connection := webPageContentHandler.GetConnection()
-	_, err := connection.Exec(ctx, "INSERT INTO t_web_page_details (url, crawled_at, content) VALUES ($1, $2, $3) ON CONFLICT (url) DO UPDATE SET crawled_at = $2, content = $3", url, crawledDateTime, content)
+	_, err := connection.Exec(ctx, "INSERT INTO t_web_page_details (url, crawled_at, content, processed) VALUES ($1, $2, $3, FALSE) ON CONFLICT (url) DO UPDATE SET crawled_at = $2, content = $3, processed = FALSE", url, crawledDateTime, content)
 	if err != nil {
 		logger.Log.Error("Failed to save crawled content", "url", url, "error", err)
 	}
