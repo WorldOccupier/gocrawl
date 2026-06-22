@@ -12,6 +12,7 @@ func resolveURL(base *url.URL, href string) *url.URL {
 	if err != nil {
 		return nil
 	}
+	parsedUrl.Fragment = ""
 
 	if !parsedUrl.IsAbs() {
 		parsedUrl = base.ResolveReference(parsedUrl)

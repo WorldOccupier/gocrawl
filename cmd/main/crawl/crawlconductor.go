@@ -15,9 +15,9 @@ import (
 var (
 	crawledValue = "1"
 	crawledTTL = time.Hour*24*7
-	rateLimit rate.Limit = 10
+	rateLimit rate.Limit = 50
 	burstLimit = 5
-	concurrentGoRoutines = 50
+	concurrentGoRoutines = 100
 )
 
 func doCrawl(url string, redisClient *redis.Client, webPageContentHandler *contenthandler.WebPageContentHandler, limiter *rate.Limiter) error {
