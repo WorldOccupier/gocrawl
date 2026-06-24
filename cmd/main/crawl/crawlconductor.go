@@ -65,7 +65,10 @@ func StartCrawl() error {
 					<-sem
 				}()
 
-				doCrawl(url, redisClient, webPageContentHandler, limiter)
+				err := doCrawl(url, redisClient, webPageContentHandler, limiter)
+				if err != nil {
+					logger.Log.Error("crawl failed", "url", url, "error", err)
+				}
 			}(url)
 		}
 	}

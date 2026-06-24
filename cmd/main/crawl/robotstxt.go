@@ -56,7 +56,7 @@ func CanCrawl(url string) (bool, error) {
 	}
 
 	robotsUrl := getRobotsUrl(parsedUrl)
-	robotsResponse, err := GetPageContent(robotsUrl, false)
+	robotsResponse, _ := GetPageContent(robotsUrl, false)
 	canCrawl := grobotstxt.AgentAllowed(robotsResponse, botUA, url)
 	saveCrawlability(parsedUrl, canCrawl)
 

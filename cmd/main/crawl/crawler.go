@@ -29,7 +29,7 @@ func makeRequest(url string) (*http.Response, error) {
 func GetPageContent(url string, checkCrawlability bool) (string, error) {
 	if checkCrawlability {
 		canCrawl, err := CanCrawl(url)
-		if err != nil || canCrawl == false {
+		if err != nil || !canCrawl {
 			return "", errors.New("Cannot crawl url: " + url)
 		}
 	}

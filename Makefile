@@ -1,4 +1,4 @@
-.PHONY: up down rebuild logs clean localbuild redis postgres
+.PHONY: up down rebuild logs clean localbuild redis postgres lint
 
 up:
 	docker compose up -d
@@ -23,3 +23,6 @@ postgres:
 
 localbuild:
 	go build -C cmd/main -o ../../gocrawl .
+
+lint:
+	cd cmd/main && golangci-lint run ./...

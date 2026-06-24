@@ -18,7 +18,7 @@ var (
 )
 
 func GetUrlsToCrawl(urlsCount rate.Limit) ([]string, error) {
-	queueLength, err := redisClient.LLen(ctx, crawlableQueueKey).Result()
+	queueLength, _ := redisClient.LLen(ctx, crawlableQueueKey).Result()
 	if queueLength == 0 {
 		return []string{}, nil
 	}
