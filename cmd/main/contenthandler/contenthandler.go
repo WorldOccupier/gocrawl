@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	ctx = context.Background()
+	ctx                = context.Background()
 	defaultDatabaseUrl = "postgres://user:pass@localhost:5432/mydb"
 )
 

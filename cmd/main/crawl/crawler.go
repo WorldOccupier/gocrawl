@@ -9,9 +9,9 @@ import (
 )
 
 var (
-	get = "GET"
+	get       = "GET"
 	userAgent = "user-agent"
-	gogetbot = "gogetbot"
+	gogetbot  = "gogetbot"
 )
 
 func makeRequest(url string) (*http.Response, error) {

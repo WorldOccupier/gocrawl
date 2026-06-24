@@ -10,11 +10,11 @@ import (
 )
 
 var (
-	ctx          = context.Background()
-	initUrlsFile = "initurls.txt"
-	crawlableQueueKey     = "queue"
-	blmPopDirection = "LEFT"
-	redisClient  = GetRedisClient()
+	ctx               = context.Background()
+	initUrlsFile      = "initurls.txt"
+	crawlableQueueKey = "queue"
+	blmPopDirection   = "LEFT"
+	redisClient       = GetRedisClient()
 )
 
 func GetUrlsToCrawl(urlsCount rate.Limit) ([]string, error) {

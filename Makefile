@@ -1,4 +1,4 @@
-.PHONY: up down rebuild logs clean localbuild redis postgres lint
+.PHONY: up down rebuild logs clean localbuild redis postgres lint fmt
 
 up:
 	docker compose up -d
@@ -26,3 +26,6 @@ localbuild:
 
 lint:
 	cd cmd/main && golangci-lint run ./...
+
+fmt:
+	cd cmd/main && go fmt ./...

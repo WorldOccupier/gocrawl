@@ -13,11 +13,11 @@ import (
 )
 
 var (
-	crawledValue = "1"
-	crawledTTL = time.Hour*24*7
-	rateLimit rate.Limit = 50
-	burstLimit = 5
-	concurrentGoRoutines = 100
+	crawledValue                    = "1"
+	crawledTTL                      = time.Hour * 24 * 7
+	rateLimit            rate.Limit = 50
+	burstLimit                      = 5
+	concurrentGoRoutines            = 100
 )
 
 func doCrawl(url string, redisClient *redis.Client, webPageContentHandler *contenthandler.WebPageContentHandler, limiter *rate.Limiter) error {
@@ -35,7 +35,7 @@ func doCrawl(url string, redisClient *redis.Client, webPageContentHandler *conte
 		logger.Log.Info("Crawling: " + url)
 		pageContent, err := GetPageContent(url, true)
 		if err != nil {
-			logger.Log.Error("Error while getting page content for url: " + url, "error", err.Error())
+			logger.Log.Error("Error while getting page content for url: "+url, "error", err.Error())
 		}
 		webPageContentHandler.SaveCrawledContent(url, time.Now(), pageContent)
 		pageLinks := GetPageLinks(url, pageContent)
